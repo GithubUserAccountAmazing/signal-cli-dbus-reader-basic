@@ -3,14 +3,14 @@
 
 
 examineMsg() {  # [1:TIMESTAMP] [2:SENDER] [3:MESSAGE] [4:CONTENT_TYPE] [5:FILENAME] 
-		            #                                                       
+		#                                                       
                 #  from here you can easily do whatever you want with the message!   
                 #  helpful commands:                                                 
                 # 	                                                             
-	 	            #	signal-cli --dbus sendReceipt -t "$1" --type read "$2"       
-	 	            #	signal-cli --dbus sendTyping "$2"                            
-	 	            #	signal-cli --dbus send -m "$3" "$2"		             
-		            #	                                                             
+	 	#	signal-cli --dbus sendReceipt -t "$1" --type read "$2"       
+	 	#	signal-cli --dbus sendTyping "$2"                            
+	 	#	signal-cli --dbus send -m "$3" "$2"		             
+		#	                                                             
 		
 	echo "TIMESTAMP: $1"
 	echo "SENDER: $2"
