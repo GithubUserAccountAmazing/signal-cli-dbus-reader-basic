@@ -1,8 +1,9 @@
 #!/bin/bash
 # basic template for setting up a signal-cli bot.
+# Requires signal-cli: https://github.com/AsamK/signal-cli
 
-# Uncomment the signal-cli daemon command on line 92
-#   or add the command to your startup scripts. 
+# Uncomment the signal-cli username & daemon command on lines 102,103
+#   or add the commands to your startup scripts.
 
 examineMsg() {  # [1:TIMESTAMP] [2:SENDER] [3:MESSAGE] [4:CONTENT_TYPE] [5:FILENAME] 
 		#                                                       
@@ -73,12 +74,14 @@ signalRead() {  # [1:$i] [2:$dbus]
 
 #---------------------------------------
 
-declare -r USERNAME="+xxxxxxxxxxx"
+# this is the directory where signal stores you attachments
 declare -r signalAttDir="/home/$USER/.local/share/signal-cli/attachments"
 
 declare -r interface="org.asamk.Signal"
 declare -r member="MessageReceivedV2"
 
+# the variables below are used to distinguish the dbus strings containing relevant data. 
+# the values of these variables may need to be changed in the future depending on future signal updates
 declare -r signalNew="int64"
 declare -r msgStart="string "
 declare -r msgEnd="array ["
@@ -89,12 +92,13 @@ declare -r lastLine="string \"expiresInSeconds\""
 
 #---------------------------------------
 
-#signal-cli -u "$USERNAME" daemon &> "/dev/null" &
-
 declare -i TIMESTAMP
 declare -i att
 declare -i getfile
 declare -i i=0 
+
+#declare -r USERNAME="+xxxxxxxxxxx"
+#signal-cli -u "$USERNAME" daemon &> "/dev/null" &
 
 clear; echo -e "\n ----- signal-bot ----- \n"
 
@@ -102,22 +106,21 @@ dbus-monitor --session "type='signal',interface='$interface', member='$member'" 
 
 	while read -r dbus; do
 		
+		# after retrieving a new message timestamp: $i > 0
 		if [[ $i -gt 0 ]]; then
-
+		
+			# reads and extracts subsequent lines for message data.
 			signalRead $i "$dbus"
 
+		# signals that a new message has appeared in the dbus.
 		elif [[ "$dbus" == "$signalNew"* ]]; then
 
-			# signals that a new message has appeared in the dbus.
-			
 			# reset all variables before reading the rest of the dbus lines.
-			
 			MESSAGE=""; CONTENT_TYPE=""; FILENAME=""
 			att=False; getfile=False
 			
 			# this line also contains the timestamp of the message, 
-			#	the first 6 characters are removed before logging.
-			
+			# the first 6 characters are removed before logging.
 			TIMESTAMP="${dbus:6}"
 			
 			# increase i by one to allow for the signalRead function to begin.
