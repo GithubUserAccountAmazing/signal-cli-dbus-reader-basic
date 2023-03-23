@@ -2,7 +2,7 @@
 # basic template for setting up a signal-cli bot.
 # Requires signal-cli: https://github.com/AsamK/signal-cli
 
-# Uncomment the signal-cli username & daemon command on lines 102,103
+# Uncomment the signal-cli username & daemon command on lines 100,101
 #   or add the commands to your startup scripts.
 
 examineMsg() {  # [1:TIMESTAMP] [2:SENDER] [3:MESSAGE] [4:CONTENT_TYPE] [5:FILENAME] 
