@@ -1,6 +1,8 @@
 #!/bin/bash
 # basic template for setting up a signal-cli bot.
 
+# Uncomment the signal-cli daemon command on line 92 
+#   or add the command to your startup scripts. 
 
 examineMsg() {  # [1:TIMESTAMP] [2:SENDER] [3:MESSAGE] [4:CONTENT_TYPE] [5:FILENAME] 
 		#                                                       
@@ -86,6 +88,8 @@ variantLine="variant"
 lastLine="string \"expiresInSeconds\""
 
 #---------------------------------------
+
+#signal-cli -u "$USERNAME" daemon &> "/dev/null" &
 
 i=0; clear; signal-cli -u "$USERNAME" daemon &> "/dev/null" &
 
