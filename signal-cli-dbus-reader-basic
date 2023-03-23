@@ -1,0 +1,122 @@
+#!/bin/bash
+# basic template for setting up a signal-cli bot.
+
+
+examineMsg() {  # [1:TIMESTAMP] [2:SENDER] [3:MESSAGE] [4:CONTENT_TYPE] [5:FILENAME] 
+		            #                                                       
+                #  from here you can easily do whatever you want with the message!   
+                #  helpful commands:                                                 
+                # 	                                                             
+	 	            #	signal-cli --dbus sendReceipt -t "$1" --type read "$2"       
+	 	            #	signal-cli --dbus sendTyping "$2"                            
+	 	            #	signal-cli --dbus send -m "$3" "$2"		             
+		            #	                                                             
+		
+	echo "TIMESTAMP: $1"
+	echo "SENDER: $2"
+	echo "MESSAGE: $3" | sed -e 's/\\n/\n         /g'
+	echo "CONTENT TYPE: $4"
+	echo "FILE NAME: $5"
+
+}
+
+signalRead() {  # [1:$i] [2:$dbus] 
+
+	if [[ "$1" == "1" ]]; then
+
+		SENDER=$(echo "$2" | grep -oP '(?<=\").*(?=\")')
+		i=$((i+1))
+
+	elif [[ "$1" == "2" ]] && [[ "$2" == "$msgStart"* ]]; then
+		
+		MESSAGE+="${2:8}\n"
+		i=$((i+1))
+		
+	elif [[ "$1" == "3" ]] && [[ "$2" != "$msgEnd"* ]]; then
+
+		MESSAGE+="$2\n"
+
+	elif [[ "$1" == "3" ]] && [[ "$2" == "$msgEnd"* ]]; then
+		
+		#remove final quotation mark and trailing spaces
+		MESSAGE="${MESSAGE%\"*}"
+		i=$((i+1))
+		
+	elif [[ "$1" == "4" ]] && [[ "$2" == "$contentAlert"* ]]; then
+	
+		att=True
+
+	elif [[ "$att" == "True" ]] && [[ "$2" == "$variantLine"* ]]; then
+
+		CONTENT_TYPE=$(echo "$2" | grep -oP '(?<=\").*(?=\")')
+		att=False; i=$((i+1))
+		
+	elif [[ "$1" == "5" ]] && [[ "$2" == "$fileAlert"* ]]; then
+
+		getfile=True
+	
+	elif [[ "$getfile" == "True" ]] && [[ "$2" == "$variantLine"* ]]; then
+		
+		FILENAME=$(echo "$2" | grep -oP '(?<=\").*(?=\")')
+		getfile=False; i=$((i+1))
+	
+	elif [[ "$2" == "$lastLine"* ]]; then
+
+		examineMsg "$TIMESTAMP" "$SENDER" "$MESSAGE" "$CONTENT_TYPE" "$FILENAME"
+
+	fi
+
+}
+
+#---------------------------------------
+
+USERNAME="+xxxxxxxxxxx"
+
+signalAttDir="/home/$USER/.local/share/signal-cli/attachments"
+
+interface="org.asamk.Signal"
+member="MessageReceivedV2"
+
+signalNew="int64"
+msgStart="string "
+msgEnd="array ["
+contentAlert="string \"contentType\""
+fileAlert="string \"remoteId\""
+variantLine="variant"
+lastLine="string \"expiresInSeconds\""
+
+#---------------------------------------
+
+i=0; clear; signal-cli -u "$USERNAME" daemon &> "/dev/null" &
+
+echo -e "\n ----- signal-bot ----- \n"
+
+dbus-monitor --session "type='signal',interface='$interface', member='$member'" | 
+
+	while read -r dbus; do
+		
+		if [[ $i -gt 0 ]]; then
+
+			signalRead "$i" "$dbus"
+
+		elif [[ "$dbus" == "$signalNew"* ]]; then
+
+			# signals that a new message has appeared in the dbus.
+			
+			# reset all variables before reading the rest of the dbus lines.
+			
+			MESSAGE=""; CONTENT_TYPE=""; FILENAME=""
+			att=False; getfile=False
+			
+			# this line also contains the timestamp of the message, 
+			#	the first 6 characters are removed before logging.
+			
+			TIMESTAMP="${dbus:6}"
+			
+			# increase i by one to allow for the signalRead function to begin.
+			
+			i=$((i+1))
+
+		fi
+
+	done
