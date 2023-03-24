@@ -3,7 +3,7 @@
 # Requires signal-cli: https://github.com/AsamK/signal-cli
 # dedicated VM highly recommended :)
 
-# Uncomment the signal-cli username & daemon command on lines 116,117
+# Uncomment the signal-cli username & daemon command on lines 117,118
 #   or add the commands to your startup scripts.
 
 
