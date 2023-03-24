@@ -1,6 +1,7 @@
 #!/bin/bash
 # basic template for setting up a signal-cli bot.
 # Requires signal-cli: https://github.com/AsamK/signal-cli
+# dedicated VM highly recommended :)
 
 # Uncomment the signal-cli username & daemon command on lines 116,117
 #   or add the commands to your startup scripts.
