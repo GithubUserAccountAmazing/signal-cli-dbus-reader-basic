@@ -91,7 +91,7 @@ signalRead() {  # [1:$i] [2:$dbus]
 
 #---------------------------------------
 
-# this is the directory where signal stores you attachments
+# this is the directory where signal stores your attachments
 declare -r signalAttDir="/home/$USER/.local/share/signal-cli/attachments"
 
 declare -r interface="org.asamk.Signal"
