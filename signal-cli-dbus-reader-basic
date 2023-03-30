@@ -90,7 +90,7 @@ readMsg() {
 			"true $v"*) e="${2#*\"}" ; e="${e%\"*}" ;; 
 			
 			# otherwise, decrement j
-			 *) j=$((j-1)) ;; esac ;;
+			*) j=$((j-1)) ;; esac ;;
 			 
 		# if needed, set FILE NAME	 
 		5) case "$g $2" in 
@@ -102,7 +102,7 @@ readMsg() {
 			"true $v"*) h="${2#*\"}" ; h="${h%\"*}" ;;
 			
 			# otherwise, decrement j
-			 *) j=$((j-1)) ;; esac ;;
+			*) j=$((j-1)) ;; esac ;;
 	
 	# if expiresInSeconds is found, call examineMsg with the global variables as arguments
 	esac; [[ "$2" == "$l"* ]] && examineMsg "$t" "$a" "$b" "$e" "$h"
