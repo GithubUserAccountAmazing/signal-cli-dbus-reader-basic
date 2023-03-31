@@ -65,10 +65,10 @@ readMsg() {
 		
 		2) case "$2" in 
 		
-			# set first line of MSG by removing the first 8 characters of s$2 and adding a newline
+			# set first line of MSG by removing the first 8 characters of $2 and adding a newline
 			"$ms"*) b="${2:8}\n" ;; 
 			
-			# if not the begining of the MSG-decrement j to skip this line
+			# if not the beginning of the MSG-decrement j to skip this line
 			*) j=$((j-1)) ;; esac ;; 
 			
 		# if needed, used to add multiple lines to MSG	
