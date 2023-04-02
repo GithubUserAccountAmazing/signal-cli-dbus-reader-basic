@@ -120,7 +120,7 @@ while read -r dbus; do
 
 	# reset variables when new message starting with "int64" is received and
 	# set msgFlag to true to avoid restarting on message body with 'int64'
-	[[ "$dbus" == "$s"* && msgFlag == false ]] && { j=0; b=""; e=""; h=""; d=false; g=false; msgflag=true; }
+	[[ "$dbus" == "$s"* && "$msgFlag" == "false" ]] && { j=0; b=""; e=""; h=""; d=false; g=false; msgFlag=true; }
 
 	# call readMsg with j and the current dbus line as arguments
 	readMsg $j "$dbus"
