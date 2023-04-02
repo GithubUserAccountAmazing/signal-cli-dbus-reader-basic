@@ -108,7 +108,7 @@ readMsg() {
 			*) j=$((j-1)) ;; esac ;;
 
 	# if expiresInSeconds is found, call examineMsg with the global variables as arguments
-	esac; [[ "$2" == "$l"* ]] && examineMsg "$t" "$a" "$b" "$e" "$h"
+	esac; [[ "$2" == "$l"* && "$msgFlag" == "false" ]] && examineMsg "$t" "$a" "$b" "$e" "$h"
 }
 
 # Clear the terminal screen and then run a dbus-monitor command that listens for
@@ -120,7 +120,7 @@ while read -r dbus; do
 
 	# reset variables when new message starting with "int64" is received and
 	# set msgFlag to true to avoid restarting on message body with 'int64'
-	[[ "$dbus" == "$s"* && msgFlag == false ]] && { j=0; b=""; e=""; h=""; d=false; g=false; msgflag=true }
+	[[ "$dbus" == "$s"* && msgFlag == false ]] && { j=0; b=""; e=""; h=""; d=false; g=false; msgflag=true; }
 
 	# call readMsg with j and the current dbus line as arguments
 	readMsg $j "$dbus"
